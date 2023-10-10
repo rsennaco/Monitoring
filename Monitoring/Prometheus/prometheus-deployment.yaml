@@ -17,6 +17,17 @@ spec:
       containers:
       - name: prometheus
         image: prom/prometheus:latest #replace with prom image
+        env:
+        - name: PROMETHEUS_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: prometheus-basic-auth
+              key: username
+        - name: PROMETHEUS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: prometheus-basic-auth
+              key: password
         resources:
           limits:
             memory: "128Mi"
