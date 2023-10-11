@@ -43,7 +43,7 @@ groups:
 
   - name: SecurityRules
     rules:
-      - alert: SecuirtyGroupChanges
+      - alert: SecurityGroupChanges
         expr: sum by (namespace, pod, change_type) (kube_audit_events{operation="Update"}) > 5
         for: 1m
         labels:

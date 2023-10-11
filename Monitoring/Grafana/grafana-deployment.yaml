@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: grafana
-        image: grafana/grafana:latest #replace with grafana docker image
+        image: grafana/grafana:latest 
         resources:
           limits:
             memory: "128Mi"
@@ -24,8 +24,11 @@ spec:
         ports:
         - containerPort: 3000
         volumeMounts:
+        - name: grafana-config
+          mountPath: /etc/grafana/grafana.ini
+          subPath: grafana.ini
         - name: grafana-storage
-          mountPath: /var/lib/grafana/data
+          mountPath: /var/lib/grafana
         env:
         - name: GF_INSTALL_PLUGINS
           value: grafana-clock-panel,grafana-simple-json-datasource
@@ -60,18 +63,22 @@ spec:
         - name: GF_SECURITY_SECRET_KEY
           valueFrom: 
             secretKeyRef:
-              name: grafana-secret
+              name: grafana-admin-secret
               key: secret-key
         - name: GF_AUTH_ANONYMOUS_ENABLED
-          value: "true"
+          value: "false"
         - name: GF_AUTH_ANONYMOUS_ORG_ROLE
-          value: Viewer #adjust as needed
+          value: Viewer 
         - name: GF_AUTH_GENERIC_OAUTH_ENABLED
-          value: "true"
+          value: "false"
 
       volumes:
+      - name: grafana-config
+        configMap:
+          name: grafana-config
       - name: grafana-storage
-        emptyDir: {}
+        persistentvolumeClaim:
+          claimName: grafana-storage-claim
 ---
 apiVersion: v1
 kind: Service
@@ -84,4 +91,4 @@ spec:
   - protocol: TCP
     port: 80
     targetPort: 3000
-  type: LoadBalancer #could be NodePort or ClusterIP
+  type: LoadBalancer 
