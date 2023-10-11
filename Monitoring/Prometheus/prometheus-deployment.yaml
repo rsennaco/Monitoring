@@ -45,7 +45,8 @@ spec:
         - "--web.console.templates=/etc/prometheus/console_libraries"
       volumes:
       - name: prometheus-storage
-        emptyDir: {}
+        persistentVolumeClaim:
+          claimName: prometheus-pvc
       - name: prometheus-configmap
         configMap:
           name: prometheus-configmap
