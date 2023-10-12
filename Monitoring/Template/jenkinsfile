@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+    
+    environment {
+        // Load secret files from Jenkins Credentials
+        SEC1 = credentials('sec1-id')
+        SEC2 = credentials('sec2-id')
+        SEC3 = credentials('sec3-id')
+        SEC4 = credentials('sec4-id')
+        SEC5 = credentials('sec5-id')
+    }
+    
+    stages {
+        stage('Checkout Code') {
+            steps {
+                // Checkout your code from source control
+                checkout scm
+            }
+        }
+        
+        stage('Apply Secrets') {
+            steps {
+                // Copy secret files to current workspace
+                sh './copy-secrets.sh'
+
+                // Run the shell script to apply secrets
+                sh './apply-secrets.sh'
+            }
+        }
+        
+        stage('Deploy Application') {
+            steps {
+                // Add steps to deploy your application
+            }
+        }
+    }
+    
+    post {
+        always {
+            // Cleanup secret files from workspace
+            sh 'rm -f sec*.yaml'
+        }
+    }
+}
